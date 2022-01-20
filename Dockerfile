@@ -1,4 +1,4 @@
-FROM go as build
+FROM golang:latest as build
 
 ENV GOPATH /go
 
@@ -18,7 +18,7 @@ RUN go get github.com/gorilla/mux
 
 RUN go build -o fichisgo
 
-FROM alpine as prod
+FROM alpine:latest as prod
 
 COPY --from=build /app/fichisgo /app
 
