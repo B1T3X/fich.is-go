@@ -1,4 +1,4 @@
-FROM golang:latest as build
+FROM golang:alpine3.15 as build
 
 RUN apk update
 
