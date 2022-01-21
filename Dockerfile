@@ -4,7 +4,9 @@ RUN apk update
 
 RUN apk add -U --no-cache ca-certificates
 
-COPY ./certs /usr/local/share/ca-certificates
+COPY ./certs/ca_bundle /usr/local/share/ca-certificates/
+
+COPY ./certs/ca_bundle /etc/ssl/certs/
 
 RUN update-ca-certificates
 
