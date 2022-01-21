@@ -1,5 +1,9 @@
 FROM golang:latest as build
 
+RUN apk update
+
+RUN apk add -U --no-cache ca-certificates && update-ca-certificates
+
 WORKDIR /app
 
 COPY ./src /app
@@ -23,6 +27,8 @@ ENV FICHIS_PRIVATE_KEY_FILE_PATH="/app/tls/private.key"
 COPY --from=build /app/fichisgo /app/fichisgo
 
 COPY --from=build etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+RUN update-ca-certificates
 
 RUN apk add libc6-compat
 
