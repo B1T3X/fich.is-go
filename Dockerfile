@@ -22,6 +22,8 @@ ENV FICHIS_PRIVATE_KEY_FILE_PATH="/app/tls/private.key"
 
 COPY --from=build /app/fichisgo /app/fichisgo
 
+COPY --from=build etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 RUN apk add libc6-compat
 
 CMD /app/fichisgo
