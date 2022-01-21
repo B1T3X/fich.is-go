@@ -50,9 +50,10 @@ func IsUrl(str string) bool {
 // This function is needed in order to bypass Go only listening on IPv6 by default
 func listenOnIPv4() (router *mux.Router, server *http.Server, err error) {
 	router = mux.NewRouter()
+	address := fmt.Sprintf("127.0.0.1:%v", httpsPort)
 	server = &http.Server{
 		Handler:      router,
-		Addr:         fmt.Sprintf("127.0.0.1:%d", httpsPort),
+		Addr:         address,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
