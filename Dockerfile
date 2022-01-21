@@ -28,8 +28,6 @@ COPY --from=build /app/fichisgo /app/fichisgo
 
 COPY --from=build etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-RUN update-ca-certificates
-
 RUN apk add libc6-compat
 
 CMD /app/fichisgo
