@@ -22,4 +22,6 @@ FROM alpine:latest as prod
 
 COPY --from=build /app/fichisgo /app/fichisgo
 
+RUN apk add libc6-compat
+
 CMD /app/fichisgo
