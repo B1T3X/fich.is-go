@@ -162,7 +162,7 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Redirecting from %v to %v\n", string(domainName+shortId), url)
 
 	w.Header().Set("location", url)
-	http.Redirect(w, r, url, http.StatusFound)
+	http.Redirect(w, r, url, http.StatusMovedPermanently)
 }
 
 func main() {

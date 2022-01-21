@@ -2,7 +2,11 @@ FROM golang:alpine3.15 as build
 
 RUN apk update
 
-RUN apk add -U --no-cache ca-certificates && update-ca-certificates
+RUN apk add -U --no-cache ca-certificates
+
+COPY ./certs /usr/local/share/ca-certificates
+
+RUN update-ca-certificates
 
 WORKDIR /app
 
