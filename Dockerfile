@@ -4,10 +4,6 @@ RUN apk update
 
 RUN apk add -U --no-cache ca-certificates
 
-COPY ./certs/* /usr/local/share/ca-certificates/
-
-COPY ./certs/* /etc/ssl/certs/
-
 RUN update-ca-certificates
 
 WORKDIR /app
