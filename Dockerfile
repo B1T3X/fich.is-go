@@ -12,7 +12,7 @@ ENV FICHIS_PRIVATE_KEY_FILE_PATH="/app/tls/private.key"
 
 WORKDIR /app
 
-COPY ./src /app/
+COPY ./src /app
 
 RUN go get github.com/gorilla/mux
 
@@ -20,6 +20,6 @@ RUN go build -o fichisgo
 
 FROM alpine:latest as prod
 
-COPY --from=build /app/fichisgo /app
+COPY --from=build /app/fichisgo /app/fichisgo
 
 CMD ./fichisgo
