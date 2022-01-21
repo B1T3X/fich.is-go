@@ -58,7 +58,8 @@ func listenOnIPv4() (router *mux.Router, server *http.Server, err error) {
 		Handler: router,
 		Addr:    address,
 		TLSConfig: &tls.Config{
-			MaxVersion: tls.VersionTLS12,
+			MaxVersion: tls.VersionTLS13,
+			MinVersion: tls.VersionTLS12,
 		},
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
