@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/rand"
+	"crypto/tls"
 	"encoding/base64"
 	"fmt"
 	"log"
@@ -51,11 +52,14 @@ func IsUrl(str string) bool {
 // This function is needed in order to bypass Go only listening on IPv6 by default
 func listenOnIPv4() (router *mux.Router, server *http.Server, err error) {
 	router = mux.NewRouter()
-	address := fmt.Sprintf("0.0.0.0:%v", httpsPort)
+	address := fmt.Sprintf("https://0.0.0.0:%v", httpsPort)
 	log.Printf("Going to listen of %v", address)
 	server = &http.Server{
-		Handler:      router,
-		Addr:         address,
+		Handler: router,
+		Addr:    address,
+		TLSConfig: &tls.Config{
+			MaxVersion: tls.VersionTLS12,
+		},
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
