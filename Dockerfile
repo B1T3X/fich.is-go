@@ -22,4 +22,4 @@ FROM alpine:latest as prod
 
 COPY --from=build /app/fichisgo /app/fichisgo
 
-CMD ./fichisgo
+CMD /app/fichisgo
