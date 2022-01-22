@@ -129,6 +129,7 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 	if shortId == "" || url == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("URL not supplied"))
 		return
 	}
 
