@@ -54,6 +54,7 @@ func listenOnIPv4() (router *mux.Router, server *http.Server, err error) {
 	router = mux.NewRouter()
 	address := fmt.Sprintf("0.0.0.0:%v", httpsPort)
 	log.Printf("Going to listen of %v", address)
+	log.Printf("Redis address: %v\n", redisAddress)
 	server = &http.Server{
 		Handler: router,
 		Addr:    address,
