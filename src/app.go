@@ -15,7 +15,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var httpPort string = os.Getenv("FICHIS_HTTP_PORT")
+var httpsPort string = os.Getenv("FICHIS_HTTPS_PORT")
+var certFile string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
+var keyFile string = os.Getenv("FICHIS_CERTIFICATE_KEY_PATH")
 
 // Generates random Base64 IDs for apiAutoAddLinkHandler
 const letters string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
@@ -50,7 +52,7 @@ func IsUrl(str string) bool {
 // This function is needed in order to bypass Go only listening on IPv6 by default
 func listenOnIPv4() (router *mux.Router, server *http.Server, err error) {
 	router = mux.NewRouter()
-	address := fmt.Sprintf("0.0.0.0:%v", httpPort)
+	address := fmt.Sprintf("0.0.0.0:%v", httpsPort)
 	log.Printf("Going to listen of %v", address)
 	server = &http.Server{
 		Handler: router,
@@ -182,7 +184,7 @@ func main() {
 
 	log.Println("Done!\nRunning.")
 
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS(certFile, keyFile)
 
 	if err != nil {
 		panic(err)

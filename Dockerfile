@@ -16,11 +16,11 @@ RUN go build -o fichisgo
 
 FROM alpine:latest as prod
 
-ENV GOPATH /go
+ENV FICHIS_CERTIFICATE_FILE_PATH=/mnt/tls/certificate.crt
 
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+ENV FICHIS_CERTIFICATE_KEY_PATH=/mnt/tls/private.key
 
-ENV FICHIS_HTTP_PORT=8080
+ENV FICHIS_HTTPS_PORT=443
 
 COPY --from=build /app/fichisgo /app/fichisgo
 
