@@ -2,19 +2,21 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	"github.com/go-redis/redis/v8"
 )
 
 var domainName string = "https://fich.is/"
 
-//var redisHost string = os.Getenv("REDIS_HOST")
-//var redisPort string = os.Getenv("REDIS_PORT")
+var redisHost string = os.Getenv("REDIS_HOST")
+var redisPort string = os.Getenv("REDIS_PORT")
 
 var ctx = context.Background()
 
 var rdb = redis.NewClient(&redis.Options{
-	Addr:     "redis:6379", //fmt.Sprintf("%v:%v", redisHost, redisPort),
+	Addr:     fmt.Sprintf("%v:%v", redisHost, redisPort),
 	Password: "",
 	DB:       0,
 })
