@@ -9,8 +9,8 @@ import (
 
 var domainName string = "https://fich.is/"
 
-var redisHost string = os.Getenv("REDIS_HOST")
-var redisPort string = os.Getenv("REDIS_PORT")
+var redisHost string = os.Getenv("FICHIS_REDIS_HOST")
+var redisPort string = os.Getenv("FICHIS_REDIS_PORT")
 
 var redisAddress string = redisHost + ":" + redisPort
 
