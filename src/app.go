@@ -19,6 +19,9 @@ var httpsPort string = os.Getenv("FICHIS_HTTPS_PORT")
 var certFile string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
 var keyFile string = os.Getenv("FICHIS_CERTIFICATE_KEY_PATH")
 
+var redisHost string = os.Getenv("REDIS_HOST")
+var redisPort string = os.Getenv("REDIS_PORT")
+
 // Generates random Base64 IDs for apiAutoAddLinkHandler
 const letters string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
 

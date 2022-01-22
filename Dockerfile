@@ -20,6 +20,10 @@ ENV FICHIS_CERTIFICATE_FILE_PATH=/mnt/tls/certificate.crt
 
 ENV FICHIS_CERTIFICATE_KEY_PATH=/mnt/tls/private.key
 
+ENV REDIS_HOST="redis"
+
+ENV REDIS_PORT=6379
+
 ENV FICHIS_HTTPS_PORT=443
 
 COPY --from=build /app/fichisgo /app/fichisgo
