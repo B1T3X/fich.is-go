@@ -120,15 +120,15 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 // Add link by randomly generated Base64 id
 func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 	shortId, err := GenerateRandomShortId(6)
-	w.Write([]byte("Holy crap!"))
-	return
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Something went wrong with automatic shortId creation"))
 	}
 	url := r.URL.Query().Get("url")
-
+	w.Write([]byte(url))
+	w.Write([]byte("Holy crap!"))
+	return
 	if shortId == "" || url == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("URL not supplied"))
