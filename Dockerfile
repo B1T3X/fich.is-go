@@ -20,11 +20,7 @@ ENV GOPATH /go
 
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
-ENV FICHIS_HTTPS_PORT=443
-
-ENV FICHIS_CERTIFICATE_FILE_PATH="/app/tls/certificate.crt"
-
-ENV FICHIS_PRIVATE_KEY_FILE_PATH="/app/tls/private.key"
+ENV FICHIS_HTTP_PORT=8080
 
 COPY --from=build /app/fichisgo /app/fichisgo
 

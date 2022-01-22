@@ -15,9 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var httpsPort string = os.Getenv("FICHIS_HTTPS_PORT")
-var certificateFilePath string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
-var privateKeyFilePath string = os.Getenv("FICHIS_PRIVATE_KEY_FILE_PATH")
+var httpPort string = os.Getenv("FICHIS_HTTP_PORT")
 
 // Generates random Base64 IDs for apiAutoAddLinkHandler
 const letters string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
@@ -52,7 +50,7 @@ func IsUrl(str string) bool {
 // This function is needed in order to bypass Go only listening on IPv6 by default
 func listenOnIPv4() (router *mux.Router, server *http.Server, err error) {
 	router = mux.NewRouter()
-	address := fmt.Sprintf("0.0.0.0:%v", httpsPort)
+	address := fmt.Sprintf("0.0.0.0:%v", httpPort)
 	log.Printf("Going to listen of %v", address)
 	server = &http.Server{
 		Handler: router,
@@ -167,28 +165,26 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	log.Println("Starting listener!")
+	log.Println("Starting listener...")
 	r, srv, err := listenOnIPv4()
 	if err != nil {
 		panic(err)
 	}
 
-	log.Println("Listener started successfully")
+	log.Println("Listener started successfully!")
 
-	log.Println("Configuring handlers")
+	log.Println("Configuring handlers...")
 	r.HandleFunc("/api/get/linkByShortId", apiGetLinkHandler).Methods("GET")
 	r.HandleFunc("/api/delete/linkByShortId", apiDeleteLinkHandler).Methods("DELETE")
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{shortId}", redirectLinkHandler).Methods("GET")
 
-	log.Println("Starting server listener...")
+	log.Println("Done!\nRunning.")
 
-	err = srv.ListenAndServeTLS(certificateFilePath, privateKeyFilePath)
+	err = srv.ListenAndServe()
 
 	if err != nil {
 		panic(err)
 	}
-
-	log.Printf("Listening on port %v\n", httpsPort)
 }

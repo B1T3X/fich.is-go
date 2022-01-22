@@ -33,18 +33,3 @@ func getLink(key string) (link string, err error) {
 	link, err = operation.Val(), operation.Err()
 	return
 }
-
-// func redisdoshit() {
-// 	rdb := redis.NewClient(&redis.Options{
-// 		Addr:     "localhost:6379",
-// 		Password: "",
-// 		DB:       0,
-// 	})
-
-// 	err := rdb.Set(ctx, "Name", "Orel", 0).Err()
-
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// }
