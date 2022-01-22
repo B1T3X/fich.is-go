@@ -180,7 +180,7 @@ func main() {
 
 	log.Println("Configuring handlers...")
 	r.HandleFunc("/api/get/linkByShortId", apiGetLinkHandler).Methods("GET")
-	r.HandleFunc("/api/delete/linkByShortId", apiDeleteLinkHandler).Methods("DELETE")
+	r.HandleFunc("/api/delete/LinkByShortId", apiDeleteLinkHandler).Methods("DELETE")
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{shortId}", redirectLinkHandler).Methods("GET")

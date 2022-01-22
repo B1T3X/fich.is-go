@@ -1,4 +1,4 @@
-module fichis-go
+module fich.is
 
 go 1.13
 
