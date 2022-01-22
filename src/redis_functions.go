@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"log"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -21,6 +22,8 @@ var rdb = redis.NewClient(&redis.Options{
 	Password: "",
 	DB:       0,
 })
+
+log.Printf("Redis address: %v\n", redisAddress)
 
 func addLink(key string, value string) (link string, err error) {
 
