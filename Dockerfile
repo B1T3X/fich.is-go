@@ -12,6 +12,8 @@ COPY ./src /app
 
 RUN go get github.com/gorilla/mux
 
+RUN echo $PWD
+
 RUN go build -o fichisgo .
 
 FROM alpine:latest as prod
