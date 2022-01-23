@@ -10,14 +10,19 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
 )
 
 var httpsPort string = os.Getenv("FICHIS_HTTPS_PORT")
+
+var httpPort string = os.Getenv("FICHIS_HTTP_PORT")
 var certFile string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
 var keyFile string = os.Getenv("FICHIS_CERTIFICATE_KEY_PATH")
+
+var fichisTlsOn string = strings.ToLower(os.Getenv("FICHIS_TLS_ON"))
 
 // Generates random Base64 IDs for apiAutoAddLinkHandler
 const letters string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
@@ -50,9 +55,9 @@ func IsUrl(str string) bool {
 // }
 
 // This function is needed in order to bypass Go only listening on IPv6 by default
-func listenOnIPv4() (router *mux.Router, server *http.Server, err error) {
+func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Server, err error) {
 	router = mux.NewRouter()
-	address := fmt.Sprintf("0.0.0.0:%v", httpsPort)
+	address := fmt.Sprintf("0.0.0.0:%v", portToListenTo)
 	log.Printf("Going to listen of %v", address)
 	log.Printf("Redis address: %v\n", redisAddress)
 	server = &http.Server{
@@ -156,6 +161,8 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	shortId := mux.Vars(r)["shortId"]
 
 	url, _ := getLink(shortId)
+
+	// TODO: Reimplement check if domain exists
 	// if url == "" {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	w.Write([]byte("Link does not exist"))
@@ -169,9 +176,20 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusMovedPermanently)
 }
 
+func sayHello(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Hello stranger"))
+}
+
 func main() {
 	log.Println("Starting listener...")
-	r, srv, err := listenOnIPv4()
+	var portToListenTo *string
+
+	if fichisTlsOn == "yes" {
+		portToListenTo = &httpsPort
+	} else {
+		portToListenTo = &httpPort
+	}
+	r, srv, err := listenOnIPv4(*portToListenTo)
 	if err != nil {
 		panic(err)
 	}
@@ -184,10 +202,15 @@ func main() {
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{shortId}", redirectLinkHandler).Methods("GET")
+	r.HandleFunc("/api/FichisHttpTrigger", sayHello).Methods("GET")
 
 	log.Println("Done!\nRunning.")
 
-	err = srv.ListenAndServeTLS(certFile, keyFile)
+	if fichisTlsOn == "yes" {
+		err = srv.ListenAndServeTLS(certFile, keyFile)
+	} else {
+		err = srv.ListenAndServe()
+	}
 
 	if err != nil {
 		panic(err)
