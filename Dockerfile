@@ -12,7 +12,7 @@ COPY ./src /app
 
 RUN go get github.com/gorilla/mux
 
-RUN go build -o fichisgo ./src
+RUN go build -o fichisgo .
 
 FROM alpine:latest as prod
 
