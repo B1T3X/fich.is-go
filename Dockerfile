@@ -10,7 +10,11 @@ WORKDIR /app
 
 COPY ./src /app/src
 
+RUN go mod init
+
 RUN go get github.com/gorilla/mux
+
+RUN go get github.com/go-redis/redis/v8
 
 RUN echo $(ls .)
 
