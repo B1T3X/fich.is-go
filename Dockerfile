@@ -8,7 +8,7 @@ RUN update-ca-certificates
 
 WORKDIR /app
 
-COPY ./src /app
+COPY ./src /app/src
 
 RUN go get github.com/gorilla/mux
 
