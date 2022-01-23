@@ -12,9 +12,9 @@ COPY ./src /app
 
 RUN go get github.com/gorilla/mux
 
-RUN echo $PWD
+RUN echo $(ls .)
 
-RUN go build -o fichisgo .
+RUN go build -o fichisgo ./src
 
 FROM alpine:latest as prod
 
