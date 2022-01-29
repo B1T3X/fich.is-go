@@ -32,6 +32,8 @@ ENV FICHIS_REDIS_PORT=6379
 
 ENV FICHIS_HTTPS_PORT=443
 
+ENV FICHIS_HTTP_PORT=80
+
 COPY --from=build /app/fichisgo /app/fichisgo
 
 COPY --from=build etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

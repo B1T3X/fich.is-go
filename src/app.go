@@ -20,7 +20,7 @@ var httpsPort string = os.Getenv("FICHIS_HTTPS_PORT")
 
 var httpPort string = os.Getenv("FICHIS_HTTP_PORT")
 var certFile string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
-var keyFile string = os.Getenv("FICHIS_CERTIFICATE_KEY_PATH")
+var keyFile string = os.Getenv("FICHIS_KEY_FILE_PATH")
 
 var fichisTlsOn string = strings.ToLower(os.Getenv("FICHIS_TLS_ON"))
 
@@ -202,7 +202,7 @@ func main() {
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{shortId}", redirectLinkHandler).Methods("GET")
-	r.HandleFunc("/api/FichisHttpTrigger", sayHello).Methods("GET")
+	r.HandleFunc("/api/FichisHttp", sayHello).Methods("GET")
 
 	log.Println("Done!\nRunning.")
 
