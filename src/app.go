@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -70,6 +71,7 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
+	net.Listen("tcp4", address)
 	return
 }
 
