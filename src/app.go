@@ -56,7 +56,7 @@ func IsUrl(str string) bool {
 // }
 
 // This function is needed in order to bypass Go only listening on IPv6 by default
-func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Server, err error) {
+func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Server, listener net.Listener, err error) {
 	router = mux.NewRouter()
 	address := fmt.Sprintf("0.0.0.0:%v", portToListenTo)
 	log.Printf("Going to listen on %v", address)
@@ -71,7 +71,7 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	net.Listen("tcp4", address)
+	listener, err = net.Listen("tcp4", address)
 	return
 }
 
@@ -191,7 +191,7 @@ func main() {
 	} else {
 		portToListenTo = &httpPort
 	}
-	r, srv, err := listenOnIPv4(*portToListenTo)
+	r, srv, listener, err := listenOnIPv4(*portToListenTo)
 	if err != nil {
 		panic(err)
 	}
@@ -209,9 +209,9 @@ func main() {
 	log.Println("Done!\nRunning.")
 
 	if fichisTlsOn == "yes" {
-		err = srv.ListenAndServeTLS(certFile, keyFile)
+		err = srv.ServeTLS(listener, certFile, keyFile)
 	} else {
-		err = srv.ListenAndServe()
+		err = srv.Serve(listener)
 	}
 
 	if err != nil {
