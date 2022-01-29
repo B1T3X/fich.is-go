@@ -59,7 +59,7 @@ func IsUrl(str string) bool {
 func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Server, err error) {
 	router = mux.NewRouter()
 	address := fmt.Sprintf("0.0.0.0:%v", portToListenTo)
-	log.Printf("Going to listen of %v", address)
+	log.Printf("Going to listen on %v", address)
 	log.Printf("Redis address: %v\n", redisAddress)
 	server = &http.Server{
 		Handler: router,
