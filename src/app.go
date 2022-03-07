@@ -99,8 +99,8 @@ func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Delete link
 func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
-	shortId := r.URL.Query().Get("id")
-	err := deleteLink(shortId)
+	id := r.URL.Query().Get("id")
+	err := deleteLink(id)
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -110,10 +110,10 @@ func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by specified id
 func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
-	shortId := r.URL.Query().Get("shortId")
+	id := r.URL.Query().Get("id")
 	url := r.URL.Query().Get("url")
 
-	if shortId == "" || url == "" {
+	if id == "" || url == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -124,7 +124,7 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	generatedLink, err := addLink(strings.ToLower(shortId), url)
+	generatedLink, err := addLink(strings.ToLower(id), url)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -136,15 +136,15 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by randomly generated Base64 id
 func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
-	shortId, err := GenerateRandomShortId(6)
+	id, err := GenerateRandomShortId(6)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Something went wrong with automatic shortId creation"))
+		w.Write([]byte("Something went wrong with automatic id creation"))
 	}
 	url := r.URL.Query().Get("url")
 
-	if shortId == "" || url == "" {
+	if id == "" || url == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("URL not supplied"))
 		return
@@ -156,7 +156,7 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	generatedLink, err := addLink(strings.ToLower(shortId), url)
+	generatedLink, err := addLink(strings.ToLower(id), url)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -169,9 +169,9 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Redirect to URL
 func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
-	shortId := mux.Vars(r)["shortId"]
+	id := mux.Vars(r)["id"]
 
-	url, _ := getLink(strings.ToLower(shortId))
+	url, _ := getLink(strings.ToLower(id))
 
 	// TODO: Reimplement check if domain exists
 	// if url == "" {
@@ -181,7 +181,7 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	log.Printf("Redirecting from %v to %v\n", string(domainName+shortId), url)
+	log.Printf("Redirecting from %v to %v\n", string(domainName+id), url)
 
 	w.Header().Set("location", url)
 	http.Redirect(w, r, url, http.StatusMovedPermanently)
@@ -212,7 +212,7 @@ func main() {
 	r.HandleFunc("/api/delete/LinkByShortId", apiDeleteLinkHandler).Methods("DELETE")
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
-	r.HandleFunc("/{shortId}", redirectLinkHandler).Methods("GET")
+	r.HandleFunc("/{id}", redirectLinkHandler).Methods("GET")
 
 	log.Println("Done!\nRunning.")
 
