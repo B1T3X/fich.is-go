@@ -18,12 +18,13 @@ import (
 )
 
 var httpsPort string = os.Getenv("FICHIS_HTTPS_PORT")
-
 var httpPort string = os.Getenv("FICHIS_HTTP_PORT")
+
 var certFile string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
 var keyFile string = os.Getenv("FICHIS_KEY_FILE_PATH")
 
 var fichisTlsOn string = strings.ToLower(os.Getenv("FICHIS_TLS_ON"))
+var fichisApiValidationOn string = strings.ToLower("FICHIS_API_VALIDATION_ON")
 
 // Generates random Base64 IDs for apiAutoAddLinkHandler
 const letters string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
@@ -45,6 +46,14 @@ func GenerateRandomShortId(n int) (string, error) {
 func IsUrl(str string) bool {
 	u, err := url.Parse(str)
 	return err == nil && u.Scheme != "" && u.Host != ""
+}
+
+func validateAPIKey(key string) (valid bool) {
+    if key == "TestApiKey" or fichisApiValidationOn == false {
+        valid = true
+    } else {
+        valid = false
+    }
 }
 
 // func getAPIKey(filename string) (key string, err error) {
@@ -78,7 +87,7 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 // Get link, do not redirect
 func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
-	url, err := getLink(id)
+	url, err := getLink(strings.ToLower(id))
 	fmt.Println(url)
 
 	if url == "" || err != nil {
@@ -115,7 +124,7 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	generatedLink, err := addLink(shortId, url)
+	generatedLink, err := addLink(strings.ToLower(shortId), url)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -147,7 +156,7 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	generatedLink, err := addLink(shortId, url)
+	generatedLink, err := addLink(strings.ToLower(shortId), url)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -162,7 +171,7 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	shortId := mux.Vars(r)["shortId"]
 
-	url, _ := getLink(shortId)
+	url, _ := getLink(strings.ToLower(shortId))
 
 	// TODO: Reimplement check if domain exists
 	// if url == "" {
@@ -204,7 +213,6 @@ func main() {
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{shortId}", redirectLinkHandler).Methods("GET")
-	r.HandleFunc("/api/FichisHttp", sayHello).Methods("GET")
 
 	log.Println("Done!\nRunning.")
 

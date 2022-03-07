@@ -52,12 +52,11 @@ variable "redis_port" {
 variable certificate_file {
     type = string
     description = "Path to certificate file"
-    default = "/mnt/d/Downloads/fich.is/certificate.crt"
+    default = "~/Downloads/fich.is/certificate.crt"
 }
 
 variable "key_file" {
     type = string
     description = "Path to private key file"
-    default = "/mnt/d/Downloads/fich.is/private.key"
-  
+    default = "~/Downloads/fich.is/private.key"
 }
