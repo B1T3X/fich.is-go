@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY ./src /app/src
 
-RUN go mod init fich.is/api
+RUN go mod init github.com/b1t3x/fich.is-go
 
 RUN go get github.com/gorilla/mux
 
