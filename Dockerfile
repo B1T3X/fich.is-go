@@ -18,7 +18,7 @@ RUN go get github.com/go-redis/redis/v8
 
 RUN echo $(ls .)
 
-RUN "go build -o fichisgo ./src"
+RUN go build -o fichisgo ./src
 
 FROM alpine:latest as prod
 
