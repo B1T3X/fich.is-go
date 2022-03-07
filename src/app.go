@@ -49,11 +49,12 @@ func IsUrl(str string) bool {
 }
 
 func validateAPIKey(key string) (valid bool) {
-    if key == "TestApiKey" or fichisApiValidationOn == false {
-        valid = true
-    } else {
-        valid = false
-    }
+	if key == "TestApiKey" || fichisApiValidationOn == false {
+		valid = true
+	} else {
+		valid = false
+	}
+	return
 }
 
 // func getAPIKey(filename string) (key string, err error) {
