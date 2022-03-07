@@ -49,7 +49,7 @@ func IsUrl(str string) bool {
 }
 
 func validateAPIKey(key string) (valid bool) {
-	if key == "TestApiKey" || fichisApiValidationOn == false {
+	if key == "TestApiKey" && fichisApiValidationOn == "yes" {
 		valid = true
 	} else {
 		valid = false
