@@ -46,7 +46,7 @@ The app itself looks for a few enviroment variables to determine how and what it
 All API calls require you to pass the `api_key` parameter as well
 
 | Endpoint | Method | Description | Parameters |
-------------------------------------------------
+-----------------------------------------------|
 `/api/create/ShortenedLink` | `POST` | Used to create shortened links | `url` -
 The URL to shorten\n`id` - The id to assign the shortened URL ("fich.is/{id}")
 
