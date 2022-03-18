@@ -13,6 +13,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"github.com/go-redis/redis/v8"
 
 	"github.com/gorilla/mux"
 )
@@ -91,7 +92,7 @@ func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	url, err := getLink(id)
 	fmt.Println(url)
 
-	if url == nil || err != nil {
+	if err == redis.Nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -172,10 +173,10 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	url, _ := getLink(id)
+	url, err := getLink(id)
 
 	// TODO: Reimplement check if domain exists
-	if url == nil {
+	if err == redis.Nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Link does not exist"))
 		fmt.Println("Null url")
