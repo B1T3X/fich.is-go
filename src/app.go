@@ -91,7 +91,7 @@ func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	url, err := getLink(id)
 	fmt.Println(url)
 
-	if url == "" || err != nil {
+	if url == nil || err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -175,12 +175,12 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	url, _ := getLink(id)
 
 	// TODO: Reimplement check if domain exists
-	// if url == "" {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	w.Write([]byte("Link does not exist"))
-	// 	fmt.Println("Null url")
-	// 	return
-	// }
+	if url == nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Link does not exist"))
+		fmt.Println("Null url")
+		return
+	}
 
 	log.Printf("Redirecting from %v to %v\n", string(domainName+id), url)
 
