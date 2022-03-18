@@ -23,7 +23,7 @@ var httpPort string = os.Getenv("FICHIS_HTTP_PORT")
 var certFile string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
 var keyFile string = os.Getenv("FICHIS_KEY_FILE_PATH")
 
-var fichisTlsOn string = strings.ToLower(os.Getenv("FICHIS_TLS_ON"))
+var fichisTlsOn string = os.Getenv("FICHIS_TLS_ON")
 var fichisApiValidationOn string = strings.ToLower("FICHIS_API_VALIDATION_ON")
 
 // Generates random Base64 IDs for apiAutoAddLinkHandler
@@ -88,7 +88,7 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 // Get link, do not redirect
 func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
-	url, err := getLink(strings.ToLower(id))
+	url, err := getLink(id)
 	fmt.Println(url)
 
 	if url == "" || err != nil {
@@ -125,7 +125,7 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	generatedLink, err := addLink(strings.ToLower(id), url)
+	generatedLink, err := addLink(id, url)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -157,7 +157,7 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	generatedLink, err := addLink(strings.ToLower(id), url)
+	generatedLink, err := addLink(id, url)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -172,7 +172,7 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	url, _ := getLink(strings.ToLower(id))
+	url, _ := getLink(id)
 
 	// TODO: Reimplement check if domain exists
 	// if url == "" {
