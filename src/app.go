@@ -27,6 +27,11 @@ var keyFile string = os.Getenv("FICHIS_KEY_FILE_PATH")
 var fichisTlsOn string = os.Getenv("FICHIS_TLS_ON")
 var fichisApiValidationOn string = strings.ToLower("FICHIS_API_VALIDATION_ON")
 
+var fichisApiKey string
+
+if fichisApiValidationOn == "yes" {
+	&fichisApiKey = os.GetEnv("FICHIS_API_KEY")
+}
 // Generates random Base64 IDs for apiAutoAddLinkHandler
 const letters string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
 
@@ -50,7 +55,7 @@ func IsUrl(str string) bool {
 }
 
 func validateAPIKey(key string) (valid bool) {
-	if key == "TestApiKey" && fichisApiValidationOn == "yes" {
+	if key == fichisApiKey && fichisApiValidationOn == "yes" {
 		valid = true
 	} else {
 		valid = false
@@ -88,6 +93,10 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 
 // Get link, do not redirect
 func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !validateAPIKey(r.URL.Query().Get("api_key")) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
+	}
 	id := r.URL.Query().Get("id")
 	url, err := getLink(id)
 	fmt.Println(url)
@@ -101,6 +110,10 @@ func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Delete link
 func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !validateAPIKey(r.URL.Query().Get("api_key")) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
+	}
 	id := r.URL.Query().Get("id")
 	err := deleteLink(id)
 
@@ -112,6 +125,10 @@ func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by specified id
 func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !validateAPIKey(r.URL.Query().Get("api_key")) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
+	}
 	id := r.URL.Query().Get("id")
 	url := r.URL.Query().Get("url")
 
@@ -138,6 +155,10 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by randomly generated Base64 id
 func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !validateAPIKey(r.URL.Query().Get("api_key")) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
+	}
 	id, err := GenerateRandomShortId(6)
 
 	if err != nil {
@@ -175,7 +196,6 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 	url, err := getLink(id)
 
-	// TODO: Reimplement check if domain exists
 	if err == redis.Nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Link does not exist"))

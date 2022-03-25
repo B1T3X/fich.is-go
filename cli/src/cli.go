@@ -6,9 +6,26 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	toml "github.com/pelletier/go-toml"
 )
+# Todo fix this
+type Config struct {
+	Url string
+	APIKey string
+}
+var config_raw []byte
+var err error
+config_raw, err := os.ReadFile("~/.config/fich.is/config")
 
-var domain string = "https://fich.is"
+if err != nil {
+	fmt.Print("Configuration at ~/.config/fich.is/config is unreadable")
+	os.Exit(1)
+}
+config := Config{}
+toml.Unmarshal(config_raw, &config)
+
+	domain := config.Url
+	apiKey = config.APIKey
 
 func shortenLink(shortenCmd *flag.FlagSet, id *string, url *string) {
 	shortenCmd.Parse(os.Args[2:])
@@ -20,6 +37,9 @@ func shortenLink(shortenCmd *flag.FlagSet, id *string, url *string) {
 		}
 		shortenCmd.PrintDefaults()
 		os.Exit(1)
+	}
+	if apiKey != nil {
+		requestPath := domain + fmt.Sprintf("/api/create/ShortenedLink?shortId=%v&url=%v", *id, *url)
 	}
 	requestPath := domain + fmt.Sprintf("/api/create/ShortenedLink?shortId=%v&url=%v", *id, *url)
 	resp, err := http.Post(requestPath, "text/*", nil)
@@ -67,8 +87,6 @@ func deleteLink(deleteCmd *flag.FlagSet, id *string) {
 	} else {
 		fmt.Printf("Link ID %v was not deleted for some reason\n", *id)
 	}
-
-	return
 }
 
 func main() {
@@ -77,6 +95,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	
 	shortenCmd := flag.NewFlagSet("shorten", flag.ExitOnError)
 
 	shortenId := shortenCmd.String("id", "", "ShortId")
