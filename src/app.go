@@ -190,7 +190,7 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello stranger"))
+	w.Write([]byte("I'm here!"))
 }
 
 func main() {
@@ -215,6 +215,7 @@ func main() {
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{id}", redirectLinkHandler).Methods("GET")
+	r.HandleFunc("/", sayHello).Methods("GET")
 
 	log.Println("Done!\nRunning.")
 
