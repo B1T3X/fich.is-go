@@ -100,6 +100,7 @@ resource "azurerm_container_group" "fichis_container_group" {
       FICHIS_REDIS_PORT            = var.redis_port
       FICHIS_CERTIFICATE_FILE_PATH = "/app/tls/certificate.crt"
       FICHIS_KEY_FILE_PATH         = "/app/tls/private.key"
+      FICHIS_HEALTH_PROBE_PATH     = var.app_gateway_health_probe_path
     }
 
     volume {
@@ -138,7 +139,7 @@ resource "azurerm_public_ip" "app_gateway_public_ip" {
   resource_group_name = var.resource_group_name
   location            = var.azure_region
   allocation_method   = "Static"
-  sku = "Standard"
+  sku                 = "Standard"
 }
 
 resource "azurerm_application_gateway" "fichis_app_gw" {
@@ -162,12 +163,12 @@ resource "azurerm_application_gateway" "fichis_app_gw" {
   }
 
   frontend_ip_configuration {
-    name      = "${var.app_gateway_name}-fe-ip-conf"
+    name                 = "${var.app_gateway_name}-fe-ip-conf"
     public_ip_address_id = azurerm_public_ip.app_gateway_public_ip.id
   }
 
   backend_address_pool {
-    name = "fichis-be-pool"
+    name  = "fichis-be-pool"
     fqdns = [azurerm_container_group.fichis_container_group.fqdn]
   }
 
@@ -177,14 +178,15 @@ resource "azurerm_application_gateway" "fichis_app_gw" {
     port                  = 443
     protocol              = "Https"
     request_timeout       = 10
-    host_name = "fich.is"
+    host_name             = "fich.is"
+    probe_name            = "fich.is-probe"
   }
 
   ssl_certificate {
-      name = "fich.is-ssl-certificate"
-      data = filebase64("~/Downloads/fich.is/fichis.pfx")
-      password = "Madua123"
-        }
+    name     = "fich.is-ssl-certificate"
+    data     = filebase64("~/Downloads/fich.is/fichis.pfx")
+    password = "Madua123"
+  }
 
   http_listener {
     name                           = "fich.is-listener"
@@ -195,6 +197,15 @@ resource "azurerm_application_gateway" "fichis_app_gw" {
     ssl_certificate_name = "fich.is-ssl-certificate"
   }
 
+  probe {
+    interval                                  = 15
+    name                                      = "fich.is-probe"
+    protocol                                  = "Https"
+    path                                      = var.app_gateway_health_probe_path
+    timeout                                   = 45
+    unhealthy_threshold                       = 3
+    pick_host_name_from_backend_http_settings = true
+  }
   request_routing_rule {
     name                       = "fichis-routing-rule"
     rule_type                  = "Basic"

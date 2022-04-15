@@ -25,7 +25,9 @@ var certFile string = os.Getenv("FICHIS_CERTIFICATE_FILE_PATH")
 var keyFile string = os.Getenv("FICHIS_KEY_FILE_PATH")
 
 var fichisTlsOn string = os.Getenv("FICHIS_TLS_ON")
-var fichisApiValidationOn string = strings.ToLower("FICHIS_API_VALIDATION_ON")
+var fichisApiValidationOn string = strings.ToLower(os.Getenv("FICHIS_API_VALIDATION_ON"))
+
+var probePath string = os.Getenv("FICHIS_HEALTH_PROBE_PATH")
 
 // Generates random Base64 IDs for apiAutoAddLinkHandler
 const letters string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
@@ -215,7 +217,7 @@ func main() {
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{id}", redirectLinkHandler).Methods("GET")
-	r.HandleFunc("/", sayHello).Methods("GET")
+	r.HandleFunc(probePath, sayHello).Methods("GET")
 
 	log.Println("Done!\nRunning.")
 

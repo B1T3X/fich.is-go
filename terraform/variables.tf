@@ -22,6 +22,11 @@ variable "app_gateway_name" {
   type    = string
   default = "fichis-app-gateway"
 }
+
+variable "app_gateway_health_probe_path" {
+  type    = string
+  default = "/api/healthprobe"
+}
 variable "container_group_name" {
   type    = string
   default = "fichis-cont-group"

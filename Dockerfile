@@ -34,6 +34,8 @@ ENV FICHIS_HTTPS_PORT=443
 
 ENV FICHIS_HTTP_PORT=80
 
+ENV FICHIS_PROBE_PATH="/api/healthprobe"
+
 COPY --from=build /app/fichisgo /app/fichisgo
 
 COPY --from=build etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
