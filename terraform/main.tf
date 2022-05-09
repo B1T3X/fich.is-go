@@ -80,8 +80,8 @@ resource "azurerm_container_group" "fichis_container_group" {
   container {
     name   = "fichis-api"
     image  = "docker.io/b1t3x/fichis-go"
-    cpu    = "1"
-    memory = "1"
+    cpu    = "0.5"
+    memory = "0.5"
 
     ports {
       port     = var.http_port
@@ -116,8 +116,8 @@ resource "azurerm_container_group" "fichis_container_group" {
   container {
     name   = "fichis-redis"
     image  = "docker.io/redis"
-    cpu    = "1"
-    memory = "1"
+    cpu    = "0.5"
+    memory = "0.5"
 
     ports {
       port     = var.redis_port
@@ -158,12 +158,17 @@ resource "azurerm_application_gateway" "fichis_app_gw" {
   }
 
   frontend_port {
-    name = "fich.is-port"
-    port = var.tls_enabled ? var.https_port : var.http_port
+    name = "fich.is-https-port"
+    port = 443
+  }
+
+  frontend_port {
+    name = "fich.is-http-port"
+    port = 80
   }
 
   frontend_ip_configuration {
-    name                 = "${var.app_gateway_name}-fe-ip-conf"
+    name                 = "${var.app_gateway_name}-fe-conf"
     public_ip_address_id = azurerm_public_ip.app_gateway_public_ip.id
   }
 
@@ -184,17 +189,24 @@ resource "azurerm_application_gateway" "fichis_app_gw" {
 
   ssl_certificate {
     name     = "fich.is-ssl-certificate"
-    data     = filebase64("~/Downloads/fich.is/fichis.pfx")
+    data    = filebase64("~/Downloads/fich.is/fichis.pfx")
     password = "Madua123"
   }
 
   http_listener {
-    name                           = "fich.is-listener"
-    frontend_ip_configuration_name = "${var.app_gateway_name}-fe-ip-conf"
-    frontend_port_name             = "fich.is-port"
+    name                           = "fich.is-https"
+    frontend_ip_configuration_name = "${var.app_gateway_name}-fe-conf"
+    frontend_port_name             = "fich.is-https-port"
     protocol                       = "Https"
 
     ssl_certificate_name = "fich.is-ssl-certificate"
+  }
+
+  http_listener {
+    name                           = "fich.is-http"
+    frontend_ip_configuration_name = "${var.app_gateway_name}-fe-conf"
+    frontend_port_name             = "fich.is-http-port"
+    protocol                       = "Http"
   }
 
   probe {
@@ -206,13 +218,23 @@ resource "azurerm_application_gateway" "fichis_app_gw" {
     unhealthy_threshold                       = 3
     pick_host_name_from_backend_http_settings = true
   }
+
   request_routing_rule {
-    name                       = "fichis-routing-rule"
+    name                       = "fichis-https-routing-rule"
     rule_type                  = "Basic"
-    http_listener_name         = "fich.is-listener"
+    http_listener_name         = "fich.is-https"
     backend_address_pool_name  = "fichis-be-pool"
     backend_http_settings_name = "fichis_http_setting"
   }
+
+  request_routing_rule {
+    name                       = "fichis-http-routing-rule"
+    rule_type                  = "Basic"
+    http_listener_name         = "fich.is-http"
+    backend_address_pool_name  = "fichis-be-pool"
+    backend_http_settings_name = "fichis_http_setting"
+  }
+
 }
 ## DNS resources
 

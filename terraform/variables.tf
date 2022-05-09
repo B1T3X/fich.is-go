@@ -54,7 +54,7 @@ variable "azure_region" {
 
 variable "tls_enabled" {
   type    = bool
-  default = false
+  default = true
 }
 
 variable "http_port" {
