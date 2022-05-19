@@ -13,8 +13,6 @@ import (
 	"os"
 	"strings"
 	"time"
-	"github.com/go-redis/redis/v8"
-
 	"github.com/gorilla/mux"
 )
 
@@ -73,7 +71,6 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 	router = mux.NewRouter()
 	address := fmt.Sprintf("0.0.0.0:%v", portToListenTo)
 	log.Printf("Going to listen on %v", address)
-	log.Printf("Redis address: %v\n", redisAddress)
 	server = &http.Server{
 		Handler: router,
 		Addr:    address,
@@ -94,7 +91,7 @@ func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 	url, err := getLink(id)
 	fmt.Println(url)
 
-	if err == redis.Nil {
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -164,7 +161,7 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Something went wrong with Redis"))
+		w.Write([]byte("Something went wrong with Firestore"))
 		return
 	}
 
@@ -178,7 +175,7 @@ func redirectLinkHandler(w http.ResponseWriter, r *http.Request) {
 	url, err := getLink(id)
 
 	// TODO: Reimplement check if domain exists
-	if err == redis.Nil {
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Link does not exist"))
 		fmt.Println("Null url")
@@ -212,8 +209,8 @@ func main() {
 	log.Println("Listener started successfully!")
 
 	log.Println("Configuring handlers...")
-	r.HandleFunc("/api/get/linkByShortId", apiGetLinkHandler).Methods("GET")
-	r.HandleFunc("/api/delete/LinkByShortId", apiDeleteLinkHandler).Methods("DELETE")
+	r.HandleFunc("/api/get/ShortenedLink", apiGetLinkHandler).Methods("GET")
+	r.HandleFunc("/api/delete/ShortenedLink", apiDeleteLinkHandler).Methods("DELETE")
 	r.HandleFunc("/api/create/ShortenedLink", apiAddLinkHandler).Methods("POST")
 	r.HandleFunc("/api/create/AutoShortenedLink", apiAutoAddLinkHandler).Methods("POST")
 	r.HandleFunc("/{id}", redirectLinkHandler).Methods("GET")
