@@ -14,7 +14,9 @@ RUN go mod init github.com/b1t3x/fich.is-go
 
 RUN go get github.com/gorilla/mux
 
-RUN go get github.com/go-redis/redis/v8
+RUN go get cloud.google.com/go/firestore
+
+RUN go get google.golang.org/api/option
 
 RUN echo $(ls .)
 
@@ -26,13 +28,15 @@ ENV FICHIS_CERTIFICATE_FILE_PATH=/mnt/tls/certificate.crt
 
 ENV FICHIS_CERTIFICATE_KEY_PATH=/mnt/tls/private.key
 
-ENV FICHIS_REDIS_HOST="redis"
-
-ENV FICHIS_REDIS_PORT=6379
-
 ENV FICHIS_HTTPS_PORT=443
 
 ENV FICHIS_HTTP_PORT=80
+
+ENV FICHIS_DOMAIN_NAME="fich.is"
+
+env FICHIS_GOOGLE_APPLICATION_CREDENTIALS_FILE_PATH="/app/secrets/sa.json"
+
+env FICHIS_GOOGLE_PROJECT_ID="fichis-go"
 
 ENV FICHIS_PROBE_PATH="/api/healthprobe"
 
