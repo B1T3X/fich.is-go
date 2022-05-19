@@ -16,6 +16,6 @@ jobs:
         with:
           gcloud_service_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
           registry: europe-west4-docker.pkg.dev
-          project_id: fichis-go
+          project_id: fichis-go/fichis-repo
           image_name: fichis-go
   
