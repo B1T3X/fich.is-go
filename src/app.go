@@ -24,6 +24,7 @@ var keyFile string = os.Getenv("FICHIS_KEY_FILE_PATH")
 
 var fichisTlsOn string = os.Getenv("FICHIS_TLS_ON")
 var fichisApiValidationOn string = strings.ToLower(os.Getenv("FICHIS_API_VALIDATION_ON"))
+var fichisApiKey string = os.Getenv("FICHIS_API_KEY")
 
 var probePath string = os.Getenv("FICHIS_HEALTH_PROBE_PATH")
 
@@ -50,21 +51,13 @@ func IsUrl(str string) bool {
 }
 
 func validateAPIKey(key string) (valid bool) {
-	if key == "TestApiKey" && fichisApiValidationOn == "yes" {
+	if (key == fichisApiKey && fichisApiValidationOn == "yes") || fichisApiValidationOn != "yes" {
 		valid = true
 	} else {
 		valid = false
 	}
 	return
 }
-
-// func getAPIKey(filename string) (key string, err error) {
-// 	content, err := ioutil.ReadFile(filename)
-
-// 	key = string(content)
-
-// 	return key, err
-// }
 
 // This function is needed in order to bypass Go only listening on IPv6 by default
 func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Server, listener net.Listener, err error) {
@@ -87,6 +80,11 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 
 // Get link, do not redirect
 func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Invalid API key"))
+		return
+	}
 	id := r.URL.Query().Get("id")
 	url, err := getLink(id)
 	fmt.Println(url)
@@ -100,6 +98,11 @@ func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Delete link
 func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Invalid API key"))
+		return
+	}
 	id := r.URL.Query().Get("id")
 	err := deleteLink(id)
 
@@ -111,6 +114,11 @@ func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by specified id
 func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Invalid API key"))
+		return
+	}
 	id := r.URL.Query().Get("id")
 	url := r.URL.Query().Get("url")
 
@@ -128,7 +136,8 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 	generatedLink, err := addLink(id, url)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte("Link already exists"))
 		return
 	}
 
@@ -137,6 +146,11 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by randomly generated Base64 id
 func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Invalid API key"))
+		return
+	}
 	id, err := GenerateRandomShortId(6)
 
 	if err != nil {
@@ -160,8 +174,8 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 	generatedLink, err := addLink(id, url)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Something went wrong with Firestore"))
+		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte("Link already exists"))
 		return
 	}
 

@@ -40,6 +40,8 @@ env FICHIS_GOOGLE_PROJECT_ID="fichis-go"
 
 ENV FICHIS_PROBE_PATH="/api/healthprobe"
 
+ENV FICHIS_API_VALIDATION_ON="no"
+
 COPY --from=build /app/fichisgo /app/fichisgo
 
 COPY --from=build etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
