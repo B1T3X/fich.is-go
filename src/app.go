@@ -51,7 +51,7 @@ func IsUrl(str string) bool {
 }
 
 func validateAPIKey(key string) (valid bool) {
-	if key == "TestApiKey" && fichisApiValidationOn == "yes" {
+	if (key == fichisApiKey && fichisApiValidationOn == "yes") || fichisApiValidationOn != "yes" {
 		valid = true
 	} else {
 		valid = false
@@ -80,7 +80,7 @@ func listenOnIPv4(portToListenTo string) (router *mux.Router, server *http.Serve
 
 // Get link, do not redirect
 func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
-	if not validateAPIKey(r.URL.Query().Get("api_key")) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Invalid API key"))
 		return
@@ -98,7 +98,7 @@ func apiGetLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Delete link
 func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
-	if not validateAPIKey(r.URL.Query().Get("api_key")) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Invalid API key"))
 		return
@@ -114,7 +114,7 @@ func apiDeleteLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by specified id
 func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
-	if not validateAPIKey(r.URL.Query().Get("api_key")) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Invalid API key"))
 		return
@@ -136,7 +136,8 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 	generatedLink, err := addLink(id, url)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte("Link already exists"))
 		return
 	}
 
@@ -145,7 +146,7 @@ func apiAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 // Add link by randomly generated Base64 id
 func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
-	if not validateAPIKey(r.URL.Query().Get("api_key")) {
+	if !(validateAPIKey(r.URL.Query().Get("api_key"))) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Invalid API key"))
 		return
@@ -173,8 +174,8 @@ func apiAutoAddLinkHandler(w http.ResponseWriter, r *http.Request) {
 	generatedLink, err := addLink(id, url)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Something went wrong with Firestore"))
+		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte("Link already exists"))
 		return
 	}
 
