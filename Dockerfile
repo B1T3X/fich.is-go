@@ -18,8 +18,6 @@ RUN go get cloud.google.com/go/firestore
 
 RUN go get google.golang.org/api/option
 
-RUN echo $(ls .)
-
 RUN go build -o fichisgo ./src
 
 FROM alpine:latest as prod

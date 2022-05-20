@@ -1,35 +1,33 @@
-variable "vnet_name" {
+variable "fichis_google_project_name" {
   type    = string
-  default = "fichis-app-vnet"
+  default = "fichis-go"
 }
 
-variable "vnet_address_ranges" {
-  type    = list(string)
-  default = ["192.168.0.0/24"]
+variable "fichis_google_project_id" {
+  type    = string
+  default = "fichis-go"
 }
 
-variable "vnet_subnets" {
-  type = list(map(string))
-  default = [
-    {
-      name   = "AppSubnet",
-      prefix = "192.168.0.0/24"
-    }
-  ]
+variable "fichis_google_cloud_run_name" {
+  type = string
+  default = "fichis-go-firestore"
 }
 
-variable "app_gateway_name" {
+variable "fichis_google_project_location" {
   type    = string
-  default = "fichis-app-gateway"
+  default = "europe-west4"
 }
 
-variable "app_gateway_health_probe_path" {
-  type    = string
-  default = "/api/healthprobe"
+variable "fichis_google_cloud_run_environment_variables" {
+  type    = map(string)
+  default = {
+    "testKey" = "testValue"
+    "FICHIS_API_VALIDATION_ON" = "yes"
+  }
 }
-variable "container_group_name" {
+variable "fichis_custom_domain_name" {
   type    = string
-  default = "fichis-cont-group"
+  default = "fich.is"
 }
 
 variable "storage_account_name" {
